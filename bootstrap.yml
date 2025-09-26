@@ -1,0 +1,48 @@
+---
+- name: Bootstrap Arch localhost
+  hosts: localhost
+  become: true
+
+  vars:
+    dotfiles_repo: "https://github.com/juaniten/dotfiles.git"
+    dotfiles_path: "{{ ansible_env.HOME }}/.dotfiles"
+
+    packages_present:
+      - git
+      - stow
+      - wget
+
+    packages_absent:
+      - 1password
+      - typora
+
+  tasks:
+    - name: Ensure required packages are installed
+      community.general.pacman:
+        name: "{{ packages_present }}"
+        state: present
+        update_cache: true
+
+    - name: Ensure unwanted packages are absent
+      community.general.pacman:
+        name: "{{ packages_absent }}"
+        state: absent
+
+    - name: Clone dotfiles repo
+      git:
+        repo: "{{ dotfiles_repo }}"
+        dest: "{{ dotfiles_path }}"
+        version: main
+        update: yes
+
+- name: Deploy dotfiles with stow
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Stow dotfiles
+      shell: |
+        cd {{ dotfiles_path }}
+        stow -v -R */
+      args:
+        executable: /bin/bash
+
