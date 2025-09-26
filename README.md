@@ -27,11 +27,11 @@ ansible-galaxy collection install community.general
 
 ## ⚡ How to use it
 
-1. Clone the bootstrap repo:
+1. Clone the ansible-dotfiles repo:
 
 ```bash
-git clone https://github.com/juaniten/bootstrap.git
-cd bootstrap
+git clone https://github.com/juaniten/ansible-dotfiles.git
+cd ansible-dotfiles
 ```
 
 2. Edit `bootstrap.yml` if needed:

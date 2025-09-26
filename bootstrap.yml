@@ -1,5 +1,5 @@
 ---
-- name: Bootstrap Arch localhost
+- name: Bootstrap Arch in localhost
   hosts: localhost
 
   vars:
