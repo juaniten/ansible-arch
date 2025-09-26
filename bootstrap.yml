@@ -4,7 +4,7 @@
 
   vars:
     # Dotfiles repo info
-    dotfiles_repo: "https://github.com/juaniten/dotfiles.git"
+    dotfiles_repo: "git@github.com:juaniten/dotfiles.git"
     dotfiles_path: "{{ ansible_env.HOME }}/.dotfiles"
 
     # Packages I want installed
@@ -17,6 +17,8 @@
     packages_absent:
       - 1password
       - typora
+      - obs-studio
+      - signal-desktop
 
   tasks:
     # -----------------------------
@@ -46,7 +48,7 @@
 
     - name: Stow dotfiles
       # Clever trick to log task as changed only when links are actually created
-      shell: "stow . --target {{ ansible_env.HOME }} --verbose=2"
+      shell: "stow --target {{ ansible_env.HOME }} --verbose=2 $(ls -d */)"
       args:
         chdir: "{{ dotfiles_path }}"
         executable: /bin/bash

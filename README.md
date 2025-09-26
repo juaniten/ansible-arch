@@ -39,7 +39,7 @@ cd ansible-dotfiles
 * Make sure `dotfiles_repo` points to your dotfiles repo:
 
 ```yaml
-dotfiles_repo: "https://github.com/<your-username>/<your-dotfiles-repo>.git"
+dotfiles_repo: "git@github.com:<your-username>/<your-dotfiles-repo>.git"
 ```
 
 * Adjust `packages_present` and `packages_absent` to taste
