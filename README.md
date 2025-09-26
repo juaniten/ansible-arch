@@ -47,7 +47,7 @@ dotfiles_repo: "https://github.com/<your-username>/<your-dotfiles-repo>.git"
 3. Run the playbook:
 
 ```bash
-ansible-playbook bootstrap.yml
+ansible-playbook --ask-become-pass bootstrap.yml
 ```
 
 * It’ll ask for your sudo password for installing/removing packages

@@ -1,48 +1,55 @@
 ---
 - name: Bootstrap Arch localhost
   hosts: localhost
-  become: true
 
   vars:
+    # Dotfiles repo info
     dotfiles_repo: "https://github.com/juaniten/dotfiles.git"
     dotfiles_path: "{{ ansible_env.HOME }}/.dotfiles"
 
+    # Packages I want installed
     packages_present:
       - git
       - stow
       - wget
 
+    # Packages I explicitly don't want
     packages_absent:
       - 1password
       - typora
 
   tasks:
+    # -----------------------------
+    # Package management
+    # -----------------------------
     - name: Ensure required packages are installed
       community.general.pacman:
         name: "{{ packages_present }}"
         state: present
         update_cache: true
+      become: true
 
     - name: Ensure unwanted packages are absent
       community.general.pacman:
         name: "{{ packages_absent }}"
         state: absent
+      become: true
 
+    # -----------------------------
+    # Dotfiles setup
+    # -----------------------------
     - name: Clone dotfiles repo
       git:
         repo: "{{ dotfiles_repo }}"
         dest: "{{ dotfiles_path }}"
-        version: main
-        update: yes
+        update: yes  # pull latest changes if repo exists
 
-- name: Deploy dotfiles with stow
-  hosts: localhost
-  connection: local
-  tasks:
     - name: Stow dotfiles
-      shell: |
-        cd {{ dotfiles_path }}
-        stow -v -R */
+      # Clever trick to log task as changed only when links are actually created
+      shell: "stow . --target {{ ansible_env.HOME }} --verbose=2"
       args:
+        chdir: "{{ dotfiles_path }}"
         executable: /bin/bash
+      register: result
+      changed_when: 'result.stderr is search("LINK: ")'
 
