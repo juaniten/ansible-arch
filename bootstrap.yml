@@ -76,12 +76,20 @@
   vars:
     dotfiles_repo: "git@github.com:juaniten/dotfiles.git"
     dotfiles_path: "{{ ansible_env.HOME }}/.dotfiles"
+    tpm_repo: "git@github.com:tmux-plugins/tpm"
+    tpm_path: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
 
   tasks:
     - name: Clone dotfiles repo
       ansible.builtin.git:
         repo: "{{ dotfiles_repo }}"
         dest: "{{ dotfiles_path }}"
+        update: yes
+
+    - name: Clone tmux plugin manager (tpm)
+      ansible.builtin.git:
+        repo: "{{ tpm_repo }}"
+        dest: "{{ tpm_path }}"
         update: yes
 
     - name: Stow dotfiles
