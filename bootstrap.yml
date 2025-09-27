@@ -12,6 +12,10 @@
       - git
       - stow
       - wget
+      - yay
+
+    aur_packages_present:
+      - hyprmon-bin
 
     # Packages I explicitly don't want
     packages_absent:
@@ -24,12 +28,38 @@
     # -----------------------------
     # Package management
     # -----------------------------
-    - name: Ensure required packages are installed
-      community.general.pacman:
-        name: "{{ packages_present }}"
-        state: present
-        update_cache: true
-      become: true
+
+    - name: Create the `aur_builder` user
+      become: yes
+      ansible.builtin.user:
+        name: aur_builder
+        create_home: yes
+        group: wheel
+
+    - name: Allow the `aur_builder` user to run `sudo pacman` without a password
+      become: yes
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers.d/11-install-aur_builder
+        line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+        create: yes
+        mode: 0644
+        validate: 'visudo -cf %s'
+
+    - name: Ensure Ansible tmp directory exists for aur_builder
+      become: yes
+      file:
+        path: /home/aur_builder/.ansible/tmp
+        state: directory
+        owner: aur_builder
+        group: wheel
+        mode: '0700'
+
+    - name: Install AUR packages using yay
+      kewlfft.aur.aur:
+        use: yay
+        name: "{{ aur_packages_present }}"
+      become: yes
+      become_user: aur_builder
 
     - name: Ensure unwanted packages are absent
       community.general.pacman:

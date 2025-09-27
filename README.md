@@ -19,10 +19,11 @@ This is my personal **Ansible playbook to bootstrap Omarchy** — ([https://omar
 sudo pacman -S ansible
 ```
 
-* Ansible collection for pacman module:
+* Ansible collections for pacman and AUR:
 
 ```bash
-ansible-galaxy collection install community.general
+ansible-galaxy collection install community.general kewlfft.aur
+
 ```
 
 ## ⚡ How to use it
