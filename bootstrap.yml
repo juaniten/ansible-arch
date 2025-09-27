@@ -10,6 +10,8 @@
       - stow
       - wget
       - yay
+      - obsidian
+      - tmux
 
     aur_packages_present:
       - hyprmon-bin
@@ -90,3 +92,18 @@
       register: result
       changed_when: 'result.stderr is search("LINK: ")'
 
+# -----------------------------
+# Obsidian vault management
+# -----------------------------
+- name: Get Obsidian Vault
+  hosts: localhost
+  vars:
+    obsidian_repo: "git@github.com:juaniten/obsidian-vault.git"
+    obsidian_path: "{{ ansible_env.HOME }}/Documents/obsidian-vault"
+
+  tasks:
+    - name: Clone obsidian-vault repo
+      ansible.builtin.git:
+        repo: "{{ obsidian_repo }}"
+        dest: "{{ obsidian_path }}"
+        update: yes
