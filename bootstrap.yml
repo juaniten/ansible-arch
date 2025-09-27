@@ -1,13 +1,10 @@
 ---
-- name: Bootstrap Arch in localhost
+# -----------------------------
+# Package management
+# -----------------------------
+- name: Manage packages on Arch
   hosts: localhost
-
   vars:
-    # Dotfiles repo info
-    dotfiles_repo: "git@github.com:juaniten/dotfiles.git"
-    dotfiles_path: "{{ ansible_env.HOME }}/.dotfiles"
-
-    # Packages I want installed
     packages_present:
       - git
       - stow
@@ -17,7 +14,6 @@
     aur_packages_present:
       - hyprmon-bin
 
-    # Packages I explicitly don't want
     packages_absent:
       - 1password
       - typora
@@ -25,10 +21,6 @@
       - signal-desktop
 
   tasks:
-    # -----------------------------
-    # Package management
-    # -----------------------------
-
     - name: Create the `aur_builder` user
       become: yes
       ansible.builtin.user:
@@ -47,12 +39,18 @@
 
     - name: Ensure Ansible tmp directory exists for aur_builder
       become: yes
-      file:
+      ansible.builtin.file:
         path: /home/aur_builder/.ansible/tmp
         state: directory
         owner: aur_builder
         group: wheel
         mode: '0700'
+
+    - name: Ensure desired packages are present
+      community.general.pacman:
+        name: "{{ packages_present }}"
+        state: present
+      become: true
 
     - name: Install AUR packages using yay
       kewlfft.aur.aur:
@@ -67,17 +65,24 @@
         state: absent
       become: true
 
-    # -----------------------------
-    # Dotfiles setup
-    # -----------------------------
+
+# -----------------------------
+# Dotfiles management
+# -----------------------------
+- name: Manage dotfiles
+  hosts: localhost
+  vars:
+    dotfiles_repo: "git@github.com:juaniten/dotfiles.git"
+    dotfiles_path: "{{ ansible_env.HOME }}/.dotfiles"
+
+  tasks:
     - name: Clone dotfiles repo
-      git:
+      ansible.builtin.git:
         repo: "{{ dotfiles_repo }}"
         dest: "{{ dotfiles_path }}"
-        update: yes  # pull latest changes if repo exists
+        update: yes
 
     - name: Stow dotfiles
-      # Clever trick to log task as changed only when links are actually created
       shell: "stow --target {{ ansible_env.HOME }} --verbose=2 $(ls -d */)"
       args:
         chdir: "{{ dotfiles_path }}"
