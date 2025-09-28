@@ -13,6 +13,7 @@
       - obsidian
       - tmux
       - firefox
+      - dbeaver
 
     aur_packages_present:
       - hyprmon-bin
