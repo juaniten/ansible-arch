@@ -12,15 +12,21 @@
       - yay
       - obsidian
       - tmux
+      - firefox
 
     aur_packages_present:
       - hyprmon-bin
 
     packages_absent:
       - 1password
+      - 1password-cli
+      - 1password-beta
       - typora
       - obs-studio
       - signal-desktop
+
+    unwanted_apps:
+      - typora
 
   tasks:
     - name: Create the `aur_builder` user
@@ -67,6 +73,11 @@
         state: absent
       become: true
 
+    - name: Remove unwanted app menu entries
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.local/share/applications/{{ item }}.desktop"
+        state: absent
+      loop: "{{ unwanted_apps }}"
 
 # -----------------------------
 # Dotfiles management
@@ -99,6 +110,11 @@
         executable: /bin/bash
       register: result
       changed_when: 'result.stderr is search("LINK: ")'
+
+    - name: Reload Hyprland
+      ansible.builtin.shell: hyprctl reload
+      args:
+        executable: /bin/bash
 
 # -----------------------------
 # Obsidian vault management
