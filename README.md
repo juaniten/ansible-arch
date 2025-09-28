@@ -53,11 +53,6 @@ ansible-playbook --ask-become-pass -i inventory.ini bootstrap.yml
 * It’ll ask for your sudo password for installing/removing packages
 * Then it installs what you like, removes what you hate, clones your dotfiles, and stows them
 
-## 💡 Notes / Tips
-
-* If `~/.dotfiles` exists but isn’t a git repo, the playbook may throw an error
-* Everything is idempotent, so you can run this as often as you want without breaking your system
-
 ## 📜 License
 
 MIT — do whatever you want with it.
