@@ -14,9 +14,13 @@
       - tmux
       - firefox
       - dbeaver
+      - bash-completion
+      - nodejs
+      - npm
 
     aur_packages_present:
       - hyprmon-bin
+      - asdf-vm
 
     packages_absent:
       - 1password
@@ -105,7 +109,7 @@
         update: yes
 
     - name: Stow dotfiles
-      shell: "stow --target {{ ansible_env.HOME }} --verbose=2 $(ls -d */)"
+      shell: "stow --adopt --target {{ ansible_env.HOME }} --verbose=2 $(ls -d */)"
       args:
         chdir: "{{ dotfiles_path }}"
         executable: /bin/bash
