@@ -109,7 +109,7 @@
         update: yes
 
     - name: Stow dotfiles
-      shell: "stow --adopt --target {{ ansible_env.HOME }} --verbose=2 $(ls -d */)"
+      shell: "stow --dotfiles --target {{ ansible_env.HOME }} --verbose=2 $(ls -d */)"
       args:
         chdir: "{{ dotfiles_path }}"
         executable: /bin/bash
